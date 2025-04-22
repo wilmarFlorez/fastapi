@@ -1,0 +1,50 @@
+# Entorno virtual
+venv/
+.env
+.env.*
+
+# Archivos compilados de Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Logs
+*.log
+
+# Configuración de editor
+.vscode/
+.idea/
+*.swp
+
+# Pytest
+htmlcov/
+.tox/
+.coverage
+coverage.xml
+.pytest_cache/
+
+# Build / Distribución
+build/
+dist/
+*.egg-info/
+
+# Archivos de caché de pip
+pip-wheel-metadata/
+*.egg
+
+# Archivos temporales del sistema operativo
+.DS_Store
+Thumbs.db
+
+# Archivos de migraciones (si no quieres subirlos)
+#migrations/
+#alembic/
+
+# Docker (opcional si usas)
+*.pid
+docker-compose.override.yml
+
+# mypy, pylint, etc.
+.mypy_cache/
+.pyre/
+.pytype/
