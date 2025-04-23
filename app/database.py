@@ -4,7 +4,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.exc import OperationalError
 import sys
 
-SQLALCHEMY_DATABASE_URL = 'postgresql://postgres:turbodb@localhost/fastapi'
+SQLALCHEMY_DATABASE_URL = "postgresql://postgres:turbodb@localhost/fastapi"
 
 try:
     engine = create_engine(SQLALCHEMY_DATABASE_URL)
@@ -19,3 +19,11 @@ except OperationalError as e:
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 Base = declarative_base()
+
+
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()

@@ -8,20 +8,12 @@ from psycopg2.extras import RealDictCursor
 import time
 from sqlalchemy.orm import Session
 from . import models
-from .database import engine, SessionLocal
+from .database import engine, get_db
 
 
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
-
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
 
 
 class Post(BaseModel):
@@ -80,24 +72,38 @@ def root():
 
 @app.get("/sqlalchemy")
 def test_posts(db: Session = Depends(get_db)):
-    return {"status": "success"}
+    posts = db.query(models.Post).all()
+
+    print("alchemy", posts)
+
+    return {"data": "success"}
 
 
 @app.get("/posts")
-def get_posts():
-    cursor.execute("""select * from posts""")
-    posts = cursor.fetchall()
+def get_posts(db: Session = Depends(get_db)):
+    # cursor.execute("""select * from posts""")
+    # posts = cursor.fetchall()
+    posts = db.query(models.Post).all()
     return {"data": posts}
 
 
 @app.post("/posts", status_code=status.HTTP_201_CREATED)
-def create_posts(post: Post):
-    cursor.execute(
-        """insert into posts (title, content, published) values (%s, %s, %s) returning *""",
-        (post.title, post.content, post.published),
+def create_posts(post: Post, db: Session = Depends(get_db)):
+    # cursor.execute(
+    # """insert into posts (title, content, published) values (%s, %s, %s) returning *""",
+    # (post.title, post.content, post.published),
+    # )
+    # new_post = cursor.fetchone()
+    # conn.commit()
+
+    new_post = models.Post(
+        title=post.title, content=post.content, published=post.published
     )
-    new_post = cursor.fetchone()
-    conn.commit()
+
+    db.add(new_post)
+    db.commit()
+    db.refresh(new_post)
+
     return {"data": new_post}
 
 
