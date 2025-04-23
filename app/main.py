@@ -61,15 +61,17 @@ def root():
     return {"message": "Hello there"}
 
 
-@app.get("/posts")
+@app.get("/posts", response_model=List[schemas.PostResponse])
 def get_posts(db: Session = Depends(get_db)):
     # cursor.execute("""select * from posts""")
     # posts = cursor.fetchall()
     posts = db.query(models.Post).all()
-    return {"data": posts}
+    return posts
 
 
-@app.post("/posts", status_code=status.HTTP_201_CREATED)
+@app.post(
+    "/posts", status_code=status.HTTP_201_CREATED, response_model=schemas.PostResponse
+)
 def create_posts(post: schemas.PostCreate, db: Session = Depends(get_db)):
     # cursor.execute(
     # """insert into posts (title, content, published) values (%s, %s, %s) returning *""",
@@ -86,7 +88,7 @@ def create_posts(post: schemas.PostCreate, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(new_post)
 
-    return {"data": new_post}
+    return new_post
 
 
 """ @app.get("/posts/latest")
@@ -95,7 +97,7 @@ def get_latest_post():
     return {"detail": post} """
 
 
-@app.get("/posts/{id}")
+@app.get("/posts/{id}", response_model=schemas.PostResponse)
 def get_post(id: int, db: Session = Depends(get_db)):
     # cursor.execute("""select * from posts where id=%s""", (str(id)))
     # post = cursor.fetchone()
@@ -130,7 +132,7 @@ def delete_post(id: int, db: Session = Depends(get_db)):
     return {"message": f"Post with id: {id} was successfully deleted"}
 
 
-@app.put("/posts/{id}")
+@app.put("/posts/{id}", response_model=schemas.PostResponse)
 def update_post(id: int, new_post: schemas.PostCreate, db: Session = Depends(get_db)):
     # cursor.execute(
     #   """update posts set title = %s, content = %s, published = %s where id = %s returning *""",
