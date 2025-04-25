@@ -4,7 +4,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.exc import OperationalError
 import sys
 
-SQLALCHEMY_DATABASE_URL = "postgresql://postgres:turbodb@localhost/fastapi"
+SQLALCHEMY_DATABASE_URL = "postgresql://<db_user>:<dbpassword>@<server>/<dbname>"
 
 try:
     engine = create_engine(SQLALCHEMY_DATABASE_URL)
